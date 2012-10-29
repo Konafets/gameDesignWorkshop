@@ -1,11 +1,11 @@
-package GUI;
+package Graphics;
 
 /**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 26, 2012
  */
 
 import java.awt.Color;
@@ -37,8 +37,8 @@ public class FullScreenDemo extends JFrame {
 	}
 
 	@Override
-	public void paint(Graphics renderContext) {
-		renderContext.drawString("Hello World!", 20, 50);
+	public void paint(Graphics canvas) {
+		canvas.drawString("Hello World!", 20, 50);
 	}
 
 	public static void main(String[] args) {

@@ -5,7 +5,7 @@ package Graphics;
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 19, 2012
+ * @version October 26, 2012
  */
 
 import java.awt.Color;
@@ -24,7 +24,7 @@ public class RandomRectangle extends JFrameDemo {
 	// number of rectangles
 	Shape rectangleShape = new Rectangle2D.Double(0.0, 0.0, 1.0, 1.0);
 	private final double MAX_RECTANGLE_SIZE = 200.0;
-	private final int MAX_RECTANGLES = 500;
+	private final int MAX_RECTANGLES = 50;
 	// affine transformations summarize translations, scalings and rotations
 	// a identity transformation does not affect position, size or rotation
 	private AffineTransform identity = new AffineTransform();
@@ -38,46 +38,46 @@ public class RandomRectangle extends JFrameDemo {
 	 * Fills the background of the canvas with a color defined in
 	 * backgroundColor.
 	 * 
-	 * @param renderContext
+	 * @param canvas
 	 *            a handle to the canvas object
 	 */
-	public void clearCanvas(Graphics2D renderContext) {
+	public void clearCanvas(Graphics2D canvas) {
 		// fill background
-		renderContext.setColor(backgroundColor);
-		renderContext.fillRect(0, 0, canvasWidth, canvasHeight);
+		canvas.setColor(backgroundColor);
+		canvas.fillRect(0, 0, canvasWidth, canvasHeight);
 	}
 
 	/**
 	 * draw rectangles
 	 * 
-	 * @param graphicContext
+	 * @param canvas
 	 *            a handle to the canvas object
 	 */
-	public void drawRectangle(Graphics2D graphicContext) {
-		Color fillColor = new Color(Tools.getNumber());
-		int xPosition = Tools.getNumber(canvasWidth);
-		int yPosition = Tools.getNumber(canvasHeight);
-		double xScale = Tools.getDouble(MAX_RECTANGLE_SIZE);
-		double yScale = Tools.getDouble(MAX_RECTANGLE_SIZE);
-		double angle = Math.toRadians(Tools.getDouble(360));
+	public void drawRectangle(Graphics2D canvas) {
+		Color fillColor = Tools.getColor();
+		int xPosition = Tools.getNaturalNumber(canvasWidth);
+		int yPosition = Tools.getNaturalNumber(canvasHeight);
+		double xScale = Tools.getPositiveDouble(MAX_RECTANGLE_SIZE);
+		double yScale = Tools.getPositiveDouble(MAX_RECTANGLE_SIZE);
+		double angle = Math.toRadians(Tools.getPositiveDouble(360));
 
 		// reset previous changes 
-		graphicContext.setTransform(identity);
+		canvas.setTransform(identity);
 		// apply transformation
-		graphicContext.translate(xPosition, yPosition);
-		graphicContext.scale(xScale, yScale);
-		graphicContext.rotate(angle);
-		graphicContext.setColor(fillColor);
-		graphicContext.fill(rectangleShape);
+		canvas.translate(xPosition, yPosition);
+		canvas.scale(xScale, yScale);
+		canvas.rotate(angle);
+		canvas.setColor(fillColor);
+		canvas.fill(rectangleShape);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		// Graphics2D is a more powerful version of the Graphics class
-		Graphics2D graphicContext = (Graphics2D) g;
-		clearCanvas(graphicContext);
+		Graphics2D canvas = (Graphics2D) g;
+		clearCanvas(canvas);
 		for (int counter = 0; counter < MAX_RECTANGLES; counter++) {
-			drawRectangle(graphicContext);
+			drawRectangle(canvas);
 		}
 	}
 

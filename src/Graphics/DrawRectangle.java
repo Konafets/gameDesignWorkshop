@@ -5,7 +5,7 @@ package Graphics;
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 19, 2012
+ * @version October 26, 2012
  */
 
 import java.awt.Color;
@@ -23,41 +23,38 @@ public class DrawRectangle extends JFrameDemo {
 		setVisible(true);
 	}
 
+	private Rectangle2D.Double createRectangle() {
+		int xPosition = Tools.getCenteredNumber(canvasWidth);
+		int yPosition = Tools.getCenteredNumber(canvasHeight);
+		int xSize = Tools.getNaturalNumber(canvasWidth / 2);
+		int ySize = Tools.getNaturalNumber(canvasHeight / 2);
+		return new Rectangle2D.Double(xPosition, yPosition, xSize, ySize);
+	}
+
 	/**
 	 * draw rectangles
 	 * 
-	 * @param renderContext
+	 * @param canvas
 	 *            a handle to the canvas object
 	 */
-	public void drawRectangle(Graphics2D renderContext) {
-		Color borderColor = new Color(Tools.getNumber());
-		int xPosition = Tools.getCenteredNumber(canvasWidth);
-		int yPosition = Tools.getCenteredNumber(canvasHeight);
-		int xSize = Tools.getNumber(canvasWidth / 2);
-		int ySize = Tools.getNumber(canvasHeight / 2);
-		Shape borderRectangle = new Rectangle2D.Double(xPosition, yPosition,
-				xSize, ySize);
-		renderContext.setColor(borderColor);
-		renderContext.fill(borderRectangle);
+	public void drawRectangle(Graphics2D canvas) {
+		Shape borderRectangle = createRectangle();
+		Color borderColor = Tools.getColor();
+		canvas.setColor(borderColor);
+		canvas.fill(borderRectangle);
 
-		// determine new color, positions and dimensions
-		Color fillColor = new Color(Tools.getNumber());
-		xPosition = Tools.getCenteredNumber(canvasWidth);
-		yPosition = Tools.getCenteredNumber(canvasHeight);
-		xSize = Tools.getNumber(canvasWidth / 2);
-		ySize = Tools.getNumber(canvasHeight / 2);
-		Shape filledRectangle = new Rectangle2D.Double(xPosition, yPosition,
-				xSize, ySize);
-		renderContext.setColor(fillColor);
-		renderContext.draw(filledRectangle);
+		Shape filledRectangle = createRectangle();
+		Color fillColor = Tools.getColor();
+		canvas.setColor(fillColor);
+		canvas.draw(filledRectangle);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		// Graphics2D is a more powerful version of the Graphics class
-		Graphics2D renderContext = (Graphics2D) g;
-		clearCanvas(renderContext);
-		drawRectangle(renderContext);
+		Graphics2D canvas = (Graphics2D) g;
+		clearCanvas(canvas);
+		drawRectangle(canvas);
 	}
 
 	public static void main(String[] args) {

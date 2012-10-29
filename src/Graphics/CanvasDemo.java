@@ -5,12 +5,13 @@ package Graphics;
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 19, 2012
+ * @version October 26, 2012
  */
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+
 import GUI.JFrameDemo;
 
 @SuppressWarnings("serial")
@@ -22,26 +23,26 @@ public class CanvasDemo extends JFrameDemo {
 	}
 
 	@Override
-	public void paint(Graphics graphicContext) {
-		clearCanvas(graphicContext);
+	public void paint(Graphics canvas) {
+		clearCanvas(canvas);
 		
-		graphicContext.setColor(Color.WHITE);
+		canvas.setColor(Color.WHITE);
 		// coordinates of the starting and end point
-		graphicContext.drawLine(100, 100, 600, 600);
+		canvas.drawLine(100, 100, 600, 600);
 
 		// RBG (additive) color definition:
 		// 0.0f minimal intensity
 		// 1.0f maximal intensity
-		Color c = new Color(0.0f, 0.0f, 1.0f);
-		graphicContext.setColor(c);
+		Color c = Tools.getColor();
+		canvas.setColor(c);
 		// rectangle definition: coordinates of the left upper corner +
 		// dimensions
-		graphicContext.fillRect(200, 200, 100, 200);
+		canvas.fillRect(200, 200, 100, 200);
 
 		// text display
-		graphicContext.setColor(Color.RED);
-		graphicContext.setFont(new Font("Tahoma", Font.ITALIC, 30));
-		graphicContext.drawString("Hello World!", 30, 60);
+		canvas.setColor(Color.RED);
+		canvas.setFont(new Font("Tahoma", Font.ITALIC, 30));
+		canvas.drawString("Hello World!", 30, 60);
 	}
 
 	public static void main(String[] args) {

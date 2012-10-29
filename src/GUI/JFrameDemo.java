@@ -27,6 +27,16 @@ public class JFrameDemo extends JFrame {
 	protected int canvasWidth, canvasHeight;
 	protected Color backgroundColor = Color.BLACK;
 
+	public int getCanvasWidth()
+	{
+		return canvasWidth;
+	}
+
+	public int getCanvasHeight()
+	{
+		return canvasHeight;
+	}
+
 	public JFrameDemo() {
 		initCanvas("JFrame Demo", 800, 600);
 		setVisible(true);

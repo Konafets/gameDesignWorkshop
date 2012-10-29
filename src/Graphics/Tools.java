@@ -5,21 +5,29 @@ package Graphics;
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 19, 2012
+ * @version October 26, 2012
  */
 
+import java.awt.Color;
 import java.util.Random;
 
 public final class Tools {
 
 	private static Random randomGenerator = new Random();
 
-	public static int getNumber() {
+	public static Color getColor() {
+		int red = getNaturalNumber(256);
+		int green = getNaturalNumber(256);
+		int blue = getNaturalNumber(256);
+		return new Color(red, green, blue);
+	}
+	
+	public static int getNaturalNumber() {
 		int result = Math.abs(randomGenerator.nextInt());
 		return result;
 	}
 
-	public static int getNumber(int maximum) {
+	public static int getNaturalNumber(int maximum) {
 		int result = Math.abs(randomGenerator.nextInt()) % maximum;
 		return result;
 	}
@@ -30,6 +38,16 @@ public final class Tools {
 		return center + offset;
 	}
 
+	public static int getInteger() {
+		int result = randomGenerator.nextInt();
+		return result;
+	}
+
+	public static int getInteger(int maximum) {
+		int result = randomGenerator.nextInt() % maximum;
+		return result;
+	}
+	
 	/**
 	 * Rendom.nextDouble returns a double value in the interval [0.0, 1.0).
 	 * 
@@ -37,8 +55,18 @@ public final class Tools {
 	 *            maximal return value
 	 * @return result a pseudo random double in the interval [0.0, scaleFactor)
 	 */
-	public static double getDouble(double scaleFactor) {
+	public static double getPositiveDouble(double scaleFactor) {
 		double result = Math.abs(randomGenerator.nextDouble()) * scaleFactor;
 		return result;
+	}
+	
+	public static double getDouble(double scaleFactor) {
+		double result = randomGenerator.nextDouble() * scaleFactor;
+		return result;
+	}
+
+	public static int getSign() {
+		double number = randomGenerator.nextDouble();
+		if (number <= 0.5) { return 1; } else {return -1; }
 	}
 }

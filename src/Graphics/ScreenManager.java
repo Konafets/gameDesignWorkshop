@@ -1,11 +1,11 @@
-package GUI;
+package Graphics;
 
 /**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 26, 2012
  */
 
 import java.awt.GraphicsDevice;

@@ -23,7 +23,7 @@ public class InterfaceDemo implements IConversation
 			System.out.println(msg);
 		}
 		*/		
-		int index = Tools.getNumber(messages.length);
+		int index = Tools.getNaturalNumber(messages.length);
 		return (messages[index]);
 	}
 
