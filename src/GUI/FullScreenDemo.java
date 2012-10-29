@@ -1,4 +1,6 @@
-package GUI; /**
+package GUI;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
@@ -6,12 +8,15 @@ package GUI; /**
  * @version October 14, 2012
  */
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.DisplayMode;
+import java.awt.Font;
+import java.awt.Graphics;
+import javax.swing.JFrame;
 
+@SuppressWarnings("serial")
 public class FullScreenDemo extends JFrame {
 
-	private static final long serialVersionUID = 1;
 	private static final long DEMO_TIME = 5000;
 
 	public void run(DisplayMode displayMode) {
@@ -31,6 +36,7 @@ public class FullScreenDemo extends JFrame {
 		}
 	}
 
+	@Override
 	public void paint(Graphics renderContext) {
 		renderContext.drawString("Hello World!", 20, 50);
 	}

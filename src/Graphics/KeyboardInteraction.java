@@ -1,32 +1,29 @@
-package Graphics; /**
+package Graphics;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 19, 2012
  */
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import GUI.JFrameDemo;
 
-public class KeyboardInteraction extends JFrame implements KeyListener {
+@SuppressWarnings("serial")
+public class KeyboardInteraction extends JFrameDemo implements KeyListener {
 
-	private static final long serialVersionUID = 1;
-
-	// convenience functions to access the dimensions of the current render
-	// context and the definition of the background color used in the canvas
-	private int canvasWidth, canvasHeight;
-	private Color backgroundColor = Color.BLACK;
-	// rectangle definition and its geometric attributes
 	private Rectangle2D rectangleShape;
 	private Color fillColor;
 	private int xPosition, yPosition;
 	private int deltaX = 0;
-	private int deltaY = 0;
 	private int rectangleWidth, rectangleHeight;
 
 	// affine transformations summarize translations, scalings and rotations
@@ -34,20 +31,10 @@ public class KeyboardInteraction extends JFrame implements KeyListener {
 	private AffineTransform identity = new AffineTransform();
 
 	public KeyboardInteraction() {
-		super("Keyboard Interaction Demo");
-		initCanvas();
+		initCanvas("Keyboard Interaction Demo", 800, 600);
 		initRectangle();
 		addKeyListener(this);
-	}
-
-	private void initCanvas() {
-		// define the dimensions of the canvas
-		setSize(800, 600);
-		// the operation system must not follow hints, so double check it
-		canvasWidth = getSize().width;
-		canvasHeight = getSize().height;
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initRectangle() {
@@ -63,38 +50,26 @@ public class KeyboardInteraction extends JFrame implements KeyListener {
 	}
 
 	/**
-	 * Fills the background of the canvas with a color defined in
-	 * backgroundColor.
-	 * 
-	 * @param renderContext
-	 *            a handle to the canvas object
-	 */
-	private void clearCanvas(Graphics2D renderContext) {
-		// fill background
-		renderContext.setColor(backgroundColor);
-		renderContext.fillRect(0, 0, canvasWidth, canvasHeight);
-	}
-
-	/**
 	 * draw rectangles
 	 * 
-	 * @param renderContext
+	 * @param graphicContext
 	 *            a handle to the canvas object
 	 */
-	private void drawRectangle(Graphics2D renderContext) {
+	private void drawRectangle(Graphics2D graphicContext) {
 		// reset previous changes
-		renderContext.setTransform(identity);
+		graphicContext.setTransform(identity);
 		// apply transformation
-		renderContext.translate(xPosition, yPosition);
-		renderContext.setColor(fillColor);
-		renderContext.fill(rectangleShape);
+		graphicContext.translate(xPosition, yPosition);
+		graphicContext.setColor(fillColor);
+		graphicContext.fill(rectangleShape);
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		// Graphics2D is a more powerful version of the Graphics class
-		Graphics2D renderContext = (Graphics2D) g;
-		clearCanvas(renderContext);
-		drawRectangle(renderContext);
+		Graphics2D graphicContext = (Graphics2D) g;
+		clearCanvas(graphicContext);
+		drawRectangle(graphicContext);
 	}
 
 	private void traceKeyEvents(KeyEvent e) {
@@ -125,32 +100,11 @@ public class KeyboardInteraction extends JFrame implements KeyListener {
 				xPosition = 0;
 			repaint();
 			break;
-		case KeyEvent.VK_UP:
-		case KeyEvent.VK_NUMPAD8:
-		case KeyEvent.VK_W:
-			deltaY--;
-			yPosition = yPosition + deltaY;
-			if (yPosition < 0) {
-				yPosition = canvasHeight;
-			}
-			repaint();
-			break;
-		case KeyEvent.VK_DOWN:
-		case KeyEvent.VK_NUMPAD2:
-		case KeyEvent.VK_S:
-			deltaY++;
-			yPosition =+ yPosition + deltaY;
-			if (yPosition > canvasHeight) {
-				yPosition = 0;
-			}
-			repaint();
-			break;
 		}
 	}
 
 	public void keyReleased(KeyEvent e) {
 		deltaX = 0;
-		deltaY = 0;
 	}
 
 	public void keyTyped(KeyEvent e) {

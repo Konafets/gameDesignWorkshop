@@ -1,22 +1,20 @@
-package GUI; /**
+package GUI;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 19, 2012
  */
 
-import javax.swing.*;
+import javax.swing.JButton;
 
-public class ButtonDemo extends JFrame {
-
-	private static final long serialVersionUID = 1;
+@SuppressWarnings("serial")
+public class ButtonDemo extends JFrameDemo {
 	
 	public ButtonDemo() {
-		setTitle("Inserts a button into a display container");
-		setSize(800, 600);
-		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		initCanvas("Inserts a button into a display container", 800, 600);
 		// insert a button into the display container 
 		JButton btn = new JButton("Hello World!");
 		add(btn);

@@ -1,9 +1,11 @@
-package Graphics; /**
+package Graphics;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 19, 2012
  */
 
 import java.util.Random;

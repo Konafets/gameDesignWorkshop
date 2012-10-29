@@ -1,69 +1,73 @@
-package Graphics; /**
+package Graphics;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * some code fragments are used by the following source:
- * "Beginning Java Game Programming", 3rd Edition by Jonathan S. Harbour
- * Courtesy of the Castel Image to Reiner Prokein
+ * Courtesy of the castle image to Reiner Prokein
  * @see http://www.reinerstilesets.de/de/2d-grafiken/2d-buildings/
  * 
- * @version October 14, 2012
+ * @version October 20, 2012
  */
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.MediaTracker;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
+import javax.imageio.ImageIO;
+import GUI.JFrameDemo;
 
-public class DrawBitmap extends JFrame {
+@SuppressWarnings("serial")
+public class DrawBitmap extends JFrameDemo {
 
-	private static final long serialVersionUID = 1L;
-	// convenience functions to access the dimensions of the current render
-	// context and the definition of the background color used in the canvas
-	private int canvasWidth, canvasHeight;
-	private Color backgroundColor = Color.BLACK;
-
-	private Image image;
+	private BufferedImage image = null;
+	private MediaTracker mediaTracker = new MediaTracker(this);
 
 	public DrawBitmap() {
-		super("Draw Bitmap Demo");
-		setSize(800, 600);
-		canvasWidth = getSize().width;
-		canvasHeight = getSize().height;
+		initCanvas("Draw Bitmap Demo", 800, 600);
+		image = loadImage("Images/castle.png");
+		repaint();
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		image = tk.getImage(getURL("Images/castle.png"));
-	}
-
-	private URL getURL(String filename) {
-		URL url = null;
-		try {
-			url = this.getClass().getResource(filename);
-		} catch (Exception e) {
-			System.out.println("Error: " + e);
-		}
-		return url;
 	}
 
 	/**
-	 * Fills the background of the canvas with a color defined in
-	 * backgroundColor.
+	 * the read-method streams the image ... so force a repaint
 	 * 
-	 * @param renderContext
-	 *            a handle to the canvas object
+	 * @param fileName
 	 */
-	public void clearCanvas(Graphics2D renderContext) {
-		// fill background
-		renderContext.setColor(backgroundColor);
-		renderContext.fillRect(0, 0, canvasWidth, canvasHeight);
+	private BufferedImage loadImage(String fileName) {
+		BufferedImage image = null;
+		URL url;
+		try {
+			// file directory relative to the file structure of the class
+			url = this.getClass().getResource(fileName);
+			// System.out.println(url);
+			image = ImageIO.read(url);
+		} catch (IOException e) {
+			System.out.println("Error: " + e);
+		}
+		mediaTracker.addImage(image, 1);
+		try {
+			mediaTracker.waitForAll();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return image;
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		// Graphics2D is a more powerful version of the Graphics class
-		Graphics2D renderContext = (Graphics2D) g;
-		clearCanvas(renderContext);
-		renderContext.drawImage(image, 0, 40, this);
+		Graphics2D graphicContext = (Graphics2D) g;
+		clearCanvas(graphicContext);
+		if (image != null) {
+			graphicContext.drawImage(image, 0, 40, this);
+		} else {
+			System.out.println("frame not yet loaded");
+		}
 	}
 
 	public static void main(String[] args) {

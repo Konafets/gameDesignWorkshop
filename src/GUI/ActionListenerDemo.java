@@ -1,25 +1,23 @@
-package GUI; /**
+package GUI;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 19, 2012
  */
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JButton;
 
-public class ActionListenerDemo extends JFrame implements ActionListener {
-
-	private static final long serialVersionUID = 1;
+@SuppressWarnings("serial")
+public class ActionListenerDemo extends JFrameDemo implements ActionListener {
 
 	public ActionListenerDemo() {
-		setTitle("ActionListener Demo");
-		setSize(300, 280);
-		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-
+		initCanvas("ActionListener Demo", 800, 600);
+		// insert a button into the display container 
 		JButton btn = new JButton("Du triffst mich NIE!");
 		btn.addActionListener(this);
 		add(btn);

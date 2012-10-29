@@ -1,4 +1,6 @@
-package GUI; /**
+package GUI;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
@@ -6,8 +8,11 @@ package GUI; /**
  * @version October 14, 2012
  */
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.DisplayMode;
+import java.awt.Window;
+import javax.swing.JFrame;
 
 /**
  * The SimpleScreenManager class manages initializing and displaying full screen

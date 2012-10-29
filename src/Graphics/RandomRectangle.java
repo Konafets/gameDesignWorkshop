@@ -1,46 +1,39 @@
 package Graphics;
+
 /**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 14, 2012
+ * @version October 19, 2012
  */
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import GUI.JFrameDemo;
 
-public class RandomRectangle extends JFrame {
+@SuppressWarnings("serial")
+public class RandomRectangle extends JFrameDemo {
 
-	private static final long serialVersionUID = 1;
-
-	// convenience functions to access the dimensions of the current render
-	// context and the definition of the background color used in the canvas
-	private int canvasWidth, canvasHeight;
-	private Color backgroundColor = Color.BLACK;
 	// a single rectangle shape will be reused again and again
 	// global variables to control the maximal size of a rectangle and the
 	// number of rectangles
 	Shape rectangleShape = new Rectangle2D.Double(0.0, 0.0, 1.0, 1.0);
-	private double maxRectangleSize = 200.0;
-	private final int maxRectangles = 5;
+	private final double MAX_RECTANGLE_SIZE = 200.0;
+	private final int MAX_RECTANGLES = 500;
 	// affine transformations summarize translations, scalings and rotations
 	// a identity transformation does not affect position, size or rotation
 	private AffineTransform identity = new AffineTransform();
 
 	public RandomRectangle() {
-		super("Random Rectangle");
-		// define the dimensions of the canvas 
-		setSize(800, 600);
-		// the operation system must not follow hints, so double check it
-		canvasWidth = getSize().width;
-		canvasHeight = getSize().height;
+		initCanvas("Random Rectangle", 800, 600);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-
+	
 	/**
 	 * Fills the background of the canvas with a color defined in
 	 * backgroundColor.
@@ -57,33 +50,34 @@ public class RandomRectangle extends JFrame {
 	/**
 	 * draw rectangles
 	 * 
-	 * @param renderContext
+	 * @param graphicContext
 	 *            a handle to the canvas object
 	 */
-	public void drawRectangle(Graphics2D renderContext) {
+	public void drawRectangle(Graphics2D graphicContext) {
 		Color fillColor = new Color(Tools.getNumber());
 		int xPosition = Tools.getNumber(canvasWidth);
 		int yPosition = Tools.getNumber(canvasHeight);
-		double xScale = Tools.getDouble(maxRectangleSize);
-		double yScale = Tools.getDouble(maxRectangleSize);
+		double xScale = Tools.getDouble(MAX_RECTANGLE_SIZE);
+		double yScale = Tools.getDouble(MAX_RECTANGLE_SIZE);
 		double angle = Math.toRadians(Tools.getDouble(360));
 
 		// reset previous changes 
-		renderContext.setTransform(identity);
+		graphicContext.setTransform(identity);
 		// apply transformation
-		renderContext.translate(xPosition, yPosition);
-		renderContext.scale(xScale, yScale);
-		renderContext.rotate(angle);
-		renderContext.setColor(fillColor);
-		renderContext.fill(rectangleShape);
+		graphicContext.translate(xPosition, yPosition);
+		graphicContext.scale(xScale, yScale);
+		graphicContext.rotate(angle);
+		graphicContext.setColor(fillColor);
+		graphicContext.fill(rectangleShape);
 	}
 
+	@Override
 	public void paint(Graphics g) {
 		// Graphics2D is a more powerful version of the Graphics class
-		Graphics2D renderContext = (Graphics2D) g;
-		clearCanvas(renderContext);
-		for (int counter = 0; counter < maxRectangles; counter++) {
-			drawRectangle(renderContext);
+		Graphics2D graphicContext = (Graphics2D) g;
+		clearCanvas(graphicContext);
+		for (int counter = 0; counter < MAX_RECTANGLES; counter++) {
+			drawRectangle(graphicContext);
 		}
 	}
 

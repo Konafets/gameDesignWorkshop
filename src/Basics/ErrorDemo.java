@@ -1,4 +1,6 @@
-package Basics; /**
+package Basics;
+
+/**
  * @author Knut Hartmann <BR>
  * Flensburg University of Applied Sciences <BR>
  * Knut.Hartmann@FH-Flensburg.DE
