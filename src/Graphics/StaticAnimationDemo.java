@@ -15,6 +15,7 @@ import GUI.JFrameDemo;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import GUI.JFrameDemo;
 
 @SuppressWarnings("serial")
 public class StaticAnimationDemo extends JFrameDemo implements Runnable {

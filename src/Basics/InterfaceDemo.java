@@ -8,6 +8,8 @@ package Basics;
  * @version October 14, 2012
  */
 
+import Graphics.*;
+
 public class InterfaceDemo implements IConversation
 {
 
