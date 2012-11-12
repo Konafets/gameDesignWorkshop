@@ -27,14 +27,16 @@ public class JFrameDemo extends JFrame {
 	protected int canvasWidth, canvasHeight;
 	protected Color backgroundColor = Color.BLACK;
 
-	public int getCanvasWidth()
-	{
+	public int getCanvasWidth() {
 		return canvasWidth;
 	}
 
-	public int getCanvasHeight()
-	{
+	public int getCanvasHeight() {
 		return canvasHeight;
+	}
+
+	public void setBackgroundColor(Color color) {
+		backgroundColor = color;
 	}
 
 	public JFrameDemo() {
@@ -47,12 +49,12 @@ public class JFrameDemo extends JFrame {
 	 * / the operation system must not follow hints, we retrieve the current
 	 * window size later on.
 	 */
-	public void initCanvas(String title, int width, int height){
+	public void initCanvas(String title, int width, int height) {
 		setTitle(title);
 		setSize(width, height);
 		canvasWidth = getSize().width;
 		canvasHeight = getSize().height;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class JFrameDemo extends JFrame {
 		graphicContext.setColor(backgroundColor);
 		graphicContext.fillRect(0, 0, canvasWidth, canvasHeight);
 	}
-	
+
 	/**
 	 * The function paint is called by the GUI event handler directly. Some
 	 * examples:
@@ -95,11 +97,13 @@ public class JFrameDemo extends JFrame {
 	 * The graphicContext implements a finite state machine, i.e., changes will
 	 * effect the rendering until they are redefined.
 	 */
-	
+
 	public void paint(Graphics graphicContext) {
 	}
 
 	public static void main(String[] args) {
 		new JFrameDemo();
 	}
+
+
 }

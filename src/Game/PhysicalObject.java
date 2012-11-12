@@ -5,183 +5,306 @@ package Game;
  *         Flensburg University of Applied Sciences <BR>
  *         Knut.Hartmann@FH-Flensburg.DE
  *
- * @version October 28, 2012
+ * @version November 10, 2012
  */
 
-import GUI.JFrameDemo;
-import Tools.NumberGenerator;
-
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import Tools.GraphTools;
+import Tools.NumberGenerator;
+import Tools.Traces.TraceFlag;
+import static Tools.Traces.*;
 
 public class PhysicalObject {
 
-    private JFrameDemo containerComponent;
+	private Stage stage;
 
-    /**
-     * attributes just for debugging purposes
-     */
-    // class variable to construct a unique ID for every thread
-    private static int idCounter = 1;
-    int objectID;
-    private Stroke debugStroke = new BasicStroke(4.0f);
-    private Color boundingBoxColor = Color.DARK_GRAY;
-    private int crossSize = 3;
-    private Color boundingSphereColor = Color.GREEN;
-    private Color debugFontColor = Color.BLACK;
-    private Font debugFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+	/**
+	 * attributes just for debugging purposes
+	 */
+	// class variable to construct a unique ID for every thread
+	private static int idCounter = 1;
+	private int objectID;
 
-    /**
-     * physical attributes
-     */
-    // unit pixel
-    protected Point2D.Double position = new Point2D.Double(0.0, 0.0);
-    protected Point2D.Double size = new Point2D.Double(0.0, 0.0);
-    protected Point2D.Double center = new Point2D.Double(0.0, 0.0);
-    protected double radius = 0.0;
-    protected Rectangle2D.Double boundingBox = new Rectangle2D.Double(0.0, 0.0,
-            1.0, 1.0);
-    // unit: pixels per millisecond
-    protected Point2D.Double velocity = new Point2D.Double(0.0, 0.0);
-    protected double orientation = 0.0;
-    protected double spin = 0.0;
+	/**
+	 * physical attributes
+	 */
+	// unit pixel
+	private Point2D.Double position = new Point2D.Double(0.0d, 0.0d);
+	private Point2D.Double size = new Point2D.Double(0.0d, 0.0d);
+	private double orientation = 0.0d;
+	private double spin = 0.0d;
 
-    public PhysicalObject(JFrameDemo frame) {
-        this.containerComponent = frame;
-        this.objectID = idCounter++;
-    }
+	private final double MAX_SPIN = 100.0d;
 
-    /**
-     * guess values of all object attributes
-     */
-    public void setRandomParameters() {
-        // put the object somewhere on the screen
-        double x = NumberGenerator.getPositiveDouble(containerComponent.getCanvasWidth());
-        double y = NumberGenerator.getPositiveDouble(containerComponent.getCanvasHeight());
-        setPosition(x, y);
-        // limit the size of the object
-        double width =
-                NumberGenerator.getPositiveDouble(containerComponent.getCanvasWidth() / 2);
-        double height =
-                NumberGenerator.getPositiveDouble(containerComponent.getCanvasHeight() / 2);
-        setSize(width, height);
-        // set speed
-        final double MAX_VELOCITY = 100.0;
-        double dx = NumberGenerator.getSign() * NumberGenerator.getPositiveDouble(MAX_VELOCITY);
-        double dy = NumberGenerator.getSign() * NumberGenerator.getPositiveDouble(MAX_VELOCITY);
-        setVelocity(dx, dy);
-        // orientation and spin
-        // final double MAX_SPIN = 10.0;
-        // orientation = Math.toRadians(Tools.getPositiveDouble(360));
-        // spin = Math.toRadians(Tools.getSign()
-        // * Tools.getPositiveDouble(MAX_SPIN));
-    }
+	private Point2D.Double center = new Point2D.Double(0.0d, 0.0d);
+	private double radius = 0.0d;
+	private Rectangle2D.Double boundingBox = new Rectangle2D.Double(0.0d, 0.0d,
+			1.0d, 1.0d);
 
-    /**
-     * summarize the object's attributes
-     */
-    public void debugInfo() {
-        String msg = "object " + objectID + " position: ("
-                + Math.round(position.x) + "," + Math.round(position.y) + ")"
-                + " center: (" + Math.round(center.x) + ","
-                + Math.round(center.y) + ")" + " size: (" + Math.round(size.x)
-                + "," + Math.round(size.y) + ")" + " radius: "
-                + Math.round(radius) + " velocity: (" + Math.round(velocity.x)
-                + "," + Math.round(velocity.y) + ")";
-        System.out.println(msg);
-    }
+	// unit: pixels per millisecond
+	private Point2D.Double velocity = new Point2D.Double(0.0d, 0.0d);
+	private Point2D.Double acceleration = new Point2D.Double(0.0d, 0.0d);
+	private Point2D.Double momentum = new Point2D.Double(0.0d, 0.0d);
+	private double density = 0.0d; // unit g per cm^3
 
-    /**
-     * setter function to physical attributes
-     */
+	private final double MAX_VELOCITY = 100.0d;
+	private final double MAX_ACCELERATION = 100.0d;
+	private final double MAX_MOMENTUM = 100.0d;
 
-    public void setSize(double width, double height) {
-        size.x = width;
-        size.y = height;
-        double halfX = size.x / 2.0;
-        double halfY = size.y / 2.0;
-        center.x = position.x + halfX;
-        center.y = position.y + halfY;
-        double diagonal = Math.sqrt(size.x * size.x + size.y * size.y);
-        radius = diagonal / 2.0;
-    }
+	private double age = 0.0d;
+	private double lifeTime = 0.0d;	
+	private final double MAX_LIFETIME = 100.0;
 
-    public void setPosition(double x, double y) {
-        position.x = x;
-        position.y = y;
-        center.x = position.x + (size.x / 2.0);
-        center.y = position.y + (size.y / 2.0);
-    }
+	public PhysicalObject(Stage stage) {
+		this.stage = stage;
+		this.objectID = idCounter++;
+	}
 
-    public void setVelocity(double dx, double dy) {
-        velocity.x = dx;
-        velocity.y = dy;
-    }
+	/**
+	 * guess values of all object attributes
+	 */
+	public void setRandomParameters() {
+		// put the object somewhere on the screen
+		GameDemo frame = stage.getFrame();
+		int screenWidth = frame.getWidth();
+		int screenHeight = frame.getHeight();
+		double x = NumberGenerator.getPositiveDouble(screenWidth);
+		double y = NumberGenerator.getPositiveDouble(screenHeight);
+		setPosition(x, y);
+		// limit the size of the object
+		double width = NumberGenerator.getPositiveDouble(screenWidth / 2);
+		double height = NumberGenerator.getPositiveDouble(screenHeight / 2);
+		setSize(width, height);
+		// orientation and spin
+		double degree = NumberGenerator.getPositiveDouble(360);
+		setOrientation(degree);
+		double rotationSpeed = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_SPIN);
+		setSpin(rotationSpeed);
+		// set physical attributes
+		double dx = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_VELOCITY);
+		double dy = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_VELOCITY);
+		setVelocity(dx, dy);
+		dx = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_ACCELERATION);
+		dy = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_ACCELERATION);
+		setAcceleration(dx, dy);
+		dx = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_MOMENTUM);
+		dy = NumberGenerator.getSign()
+				* NumberGenerator.getPositiveDouble(MAX_MOMENTUM);
+		setMomentum(dx, dy);
+		setDensity(0.8); // wood [0.4 .. 0.8]
+		// parameter for particle system
+		double msec = NumberGenerator.getPositiveDouble(MAX_LIFETIME);
+		setLifeTime(msec);
+	}
 
-    /**
-     * accessing bounding Box
-     */
+	public int getID() {
+		return objectID;
+	}
 
-    public Rectangle2D.Double getBoundingBox() {
-        boundingBox.setRect(position.x, position.y, size.x, size.y);
-        return boundingBox;
-    }
+	/**
+	 * summarize the object's attributes
+	 */
+	public void debugInfo() {
+		System.out.format("  object %d\n", objectID);
+		System.out.format("\tposition: (%3.0f, %3.0f)", position.x, position.y);
+		System.out.format("  center: (%3.0f, %3.0f)", center.x, center.y);
+		System.out.format("  size: (%3.0f, %3.0f)", size.x, size.y);
+		System.out.format("  radius: %3.0f\n", radius);
+		System.out.format("\tvelocity: (%3.0f, %3.0f)", velocity.x, velocity.y);
+		System.out.format("  acceleration: (%3.0f, %3.0f)\n", acceleration.x,
+				acceleration.y);
+		System.out.format("\tmomentum: (%3.0f, %3.0f)", momentum.x, momentum.y);
+		System.out.format("  mass: %3.1f\n", getMass());
+		System.out.format("\torientation: %3.1f", orientation);
+		System.out.format("  spin: %3.1f\n", spin);
+		System.out.format("\tage: %3.1f  lifeTime: %3.1f\n", age, lifeTime);		
+	}
 
-    public void updateBoundingBox() {
-        boundingBox.setRect(position.x, position.y, size.x, size.y);
-    }
+	/**
+	 * getter and setter function to spatial attributes
+	 */
 
-    /**
-     * vector-based physics
-     */
+	public void setPosition(double x, double y) {
+		position.x = x;
+		position.y = y;
+		center.x = position.x + (size.x / 2.0);
+		center.y = position.y + (size.y / 2.0);
+	}
 
-    public void stopMoving() {
-        velocity.x = 0.0;
-        velocity.y = 0.0;
-    }
+	public Point2D getPosition() {
+		return position;
+	}
 
-    /**
-     * updates this sprite's animation and its position based on the velocity.
-     */
-    public void update(double elapsedTime, boolean verbose) {
-        double factor = elapsedTime / 1000.0;
-        double dx = velocity.x * factor;
-        double dy = velocity.y * factor;
-        if (verbose) {
-            System.out.println(" shift: (" + dx + "," + dy + ")");
-        }
-        position.x = position.x + dx;
-        position.y = position.y + dy;
-        center.x = center.x + dx;
-        center.y = center.y + dy;
+	public double getX() {
+		return position.x;
+	}
 
-        // double deltaSpin = spin * factor;
-        // orientation = orientation + deltaSpin;
-    }
+	public double getY() {
+		return position.y;
+	}
 
-    /**
-     * draw the default shape to debug the game
-     */
-    public void draw(Graphics2D canvas) {
-        canvas.setStroke(debugStroke);
-        // display bounding boxes
-        canvas.setColor(boundingBoxColor);
-        canvas.drawRect((int) position.x, (int) position.y, (int) size.x,
-                (int) size.y);
-        // display bounding sphere and a cross for the center
-        canvas.setColor(boundingSphereColor);
-        canvas.drawLine((int) center.x - crossSize, (int) center.y,
-                (int) center.x + crossSize, (int) center.y);
-        canvas.drawLine((int) center.x, (int) center.y - crossSize,
-                (int) center.x, (int) center.y + crossSize);
-        double circleLeftUpperX = center.x - radius;
-        double circleLeftUpperY = center.y - radius;
-        canvas.drawOval((int) circleLeftUpperX, (int) circleLeftUpperY,
-                (int) radius * 2, (int) radius * 2);
-        // display object ID
-        canvas.setColor(debugFontColor);
-        canvas.setFont(debugFont);
-        canvas.drawString("o" + objectID, (int) center.x, (int) center.y);
-    }
+	public void setSize(double width, double height) {
+		size.x = width;
+		size.y = height;
+		double halfX = size.x / 2.0;
+		double halfY = size.y / 2.0;
+		center.x = position.x + halfX;
+		center.y = position.y + halfY;
+		double diagonal = Math.sqrt(size.x * size.x + size.y * size.y);
+		radius = diagonal / 2.0;
+	}
+
+	public Point2D getSize() {
+		return size;
+	}
+
+	public double getWidth() {
+		return size.x;
+	}
+
+	public double getHeight() {
+		return size.y;
+	}
+
+	public void setOrientation(double degree) {
+		orientation = Math.toRadians(degree);
+	}
+
+	public double getOrientation() {
+		return orientation;
+	}
+
+	public void setSpin(double speed) {
+		spin = speed;
+	}
+
+	public double getSpin() {
+		return spin;
+	}
+
+	/**
+	 * getter and setter function to physical attributes
+	 */
+
+	public void setVelocity(double dx, double dy) {
+		velocity.x = dx;
+		velocity.y = dy;
+	}
+
+	public Point2D.Double getVelocity() {
+		return velocity;
+	}
+
+	public void setAcceleration(double dx, double dy) {
+		acceleration.x = dx;
+		acceleration.y = dy;
+	}
+
+	public Point2D.Double getAcceleration() {
+		return acceleration;
+	}
+
+	public void setMomentum(double dx, double dy) {
+		momentum.x = dx;
+		momentum.y = dy;
+	}
+
+	public Point2D.Double getMomentum() {
+		return momentum;
+	}
+
+	public double getVolume() {
+		// volume of the bounding sphere
+		return 4.0 / 3.0 * Math.PI * radius * radius * radius;
+	}
+
+	// mass = volume * density
+	public double getMass() {
+		return getVolume() * getDensity();
+	}
+
+	public void setDensity(double density) {
+		this.density = density;
+	}
+
+	public double getDensity() {
+		return density;
+	}
+
+	/**
+	 * accessing bounding Box
+	 */
+
+	public Rectangle2D.Double getBoundingBox() {
+		boundingBox.setRect(position.x, position.y, size.x, size.y);
+		return boundingBox;
+	}
+
+	public void updateBoundingBox() {
+		boundingBox.setRect(position.x, position.y, size.x, size.y);
+	}
+
+	/**
+	 * parameters for particle system
+	 */
+
+	public void setLifeTime(double msec) {
+		lifeTime = msec;
+	}
+
+	public double getLifeTime() {
+		return lifeTime;
+	}
+
+	/**
+	 * vector-based physics
+	 */
+
+	public void stopMoving() {
+		velocity.x = 0.0d;
+		velocity.y = 0.0d;
+		acceleration.x = 0.0d;
+		acceleration.y = 0.0d;
+		momentum.x = 0.0d;
+		momentum.y = 0.0d;
+	}
+
+	/**
+	 * updates this sprite's animation and its position based on the velocity.
+	 */
+	public void update(double elapsedTime) {
+		double factor = elapsedTime / 1000.0;
+		double dx = velocity.x * factor;
+		double dy = velocity.y * factor;
+		if (is(TraceFlag.UPDATES)) {
+			System.out.format("\tshift: (%1.1f, %1.1f)\n", dx, dy);
+		}
+		position.x = position.x + dx;
+		position.y = position.y + dy;
+		center.x = center.x + dx;
+		center.y = center.y + dy;
+
+		// double deltaSpin = spin * factor;
+		// orientation = orientation + deltaSpin;
+	}
+
+	/**
+	 * draw the default shape to debug the game
+	 */
+	public void draw(Graphics g) {
+		Graphics2D canvas = (Graphics2D) g;
+		GraphTools.drawBoundingBox(canvas, boundingBox);
+		// display bounding sphere and a cross for the center
+		GraphTools.drawBoundingCircle(canvas, center, radius);
+		GraphTools.drawText(canvas, "o" + objectID, center);
+	}
 }

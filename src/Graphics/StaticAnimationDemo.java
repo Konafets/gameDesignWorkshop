@@ -30,8 +30,8 @@ public class StaticAnimationDemo extends JFrameDemo implements Runnable {
     public StaticAnimationDemo() {
         initCanvas("Static Animation Demo", 800, 600);
         player = new StaticAnimation(this);
-        player.addSprite("Graphics/Images/ship_shield.png");
-        player.addSprite("Graphics/Images/ship_thrust.png");
+        player.addSprite("Images/ship_shield.png");
+        player.addSprite("Images/ship_thrust.png");
         setVisible(true);
         startGameLoop();
     }

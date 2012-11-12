@@ -5,7 +5,7 @@ package Game;
  *         Flensburg University of Applied Sciences <BR>
  *         Knut.Hartmann@FH-Flensburg.DE
  * 
- * @version October 28, 2012
+ * @version November 10, 2012
  */
 
 import java.awt.Color;
@@ -78,9 +78,9 @@ public class Skin {
 			// reset previous changes
 			canvas.setTransform(identity);
 			// apply transformation
-			canvas.translate(object.position.x, object.position.y);
-			canvas.scale(object.size.x, object.size.x);
-			canvas.rotate(object.orientation);
+			canvas.translate(object.getX(), object.getY());
+			canvas.scale(object.getWidth(), object.getHeight());
+			canvas.rotate(object.getOrientation());
 			canvas.setColor(fillColor);
 			// draw the default shape to debug the game
 			canvas.fill(shape);
